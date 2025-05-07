@@ -131,7 +131,9 @@ fun AddRecipeScreen(
                     text = stringResource(R.string.add_recipe_btn),
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    addRecipeViewModel.addRecipe()
+                    addRecipeViewModel.addRecipe().invokeOnCompletion {
+                        navController.navigateUp()
+                    }
                 }
             }
         }

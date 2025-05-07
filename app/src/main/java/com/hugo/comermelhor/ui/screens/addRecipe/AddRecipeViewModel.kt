@@ -8,6 +8,7 @@ import com.hugo.comermelhor.data.dao.RecipeDao
 import com.hugo.comermelhor.data.entities.RecipeWithIngredients
 import com.hugo.comermelhor.data.model.Ingredient
 import com.hugo.comermelhor.data.model.Recipe
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
@@ -67,9 +68,9 @@ class AddRecipeViewModel(
             _uiState.value.copy(ingredients = ingredients)
     }
 
-    fun addRecipe() {
+    fun addRecipe(): Job {
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-        viewModelScope.launch {
+        return viewModelScope.launch {
             flowOf(
                 recipeDao.insertRecipe(
                     Recipe(
