@@ -2,6 +2,7 @@ package com.hugo.comermelhor.data.model
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -9,8 +10,9 @@ import androidx.room.PrimaryKey
         entity = Recipe::class,
         parentColumns = ["recipeId"],
         childColumns = ["recipeId"],
-        onDelete = ForeignKey.NO_ACTION
-    )]
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(value = ["recipeId"])]
 )
 data class Ingredient(
     @PrimaryKey(autoGenerate = true) val ingredientId: Int = 0,

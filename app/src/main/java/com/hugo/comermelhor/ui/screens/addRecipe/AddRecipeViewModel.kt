@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
 import com.hugo.comermelhor.data.dao.IngredientsDao
 import com.hugo.comermelhor.data.dao.RecipeDao
-import com.hugo.comermelhor.data.entities.RecipeWithIngredients
 import com.hugo.comermelhor.data.model.Ingredient
 import com.hugo.comermelhor.data.model.Recipe
 import kotlinx.coroutines.Job
@@ -21,13 +20,22 @@ class AddRecipeViewModel(
     private val _uiState = MutableStateFlow(AddRecipeViewState())
     val uiState = _uiState
 
-    fun editRecipe(recipeWithIngredients: RecipeWithIngredients) {
-        _uiState.value = _uiState.value.copy(
-            description = recipeWithIngredients.recipe.description,
-            preparation = recipeWithIngredients.recipe.preparation,
-            ingredients = recipeWithIngredients.ingredients,
-            calories = recipeWithIngredients.recipe.calories
-        )
+    fun loadRecipeWithIngredients(recipeId: Int) {
+        if (recipeId != -1) {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            viewModelScope.launch {
+                recipeDao.getRecipeWithIngredientsById(recipeId).collect {
+                    _uiState.value = _uiState.value.copy(
+                        recipeId = recipeId,
+                        description = it.recipe.description,
+                        preparation = it.recipe.preparation,
+                        calories = it.recipe.calories,
+                        ingredients = it.ingredients,
+                        isLoading = false, error = null
+                    )
+                }
+            }
+        }
     }
 
     fun updateDescription(description: String) {
@@ -68,30 +76,35 @@ class AddRecipeViewModel(
             _uiState.value.copy(ingredients = ingredients)
     }
 
-    fun addRecipe(): Job {
+    fun addRecipeIfNotExists(): Job {
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         return viewModelScope.launch {
-            flowOf(
-                recipeDao.insertRecipe(
-                    Recipe(
-                        description = _uiState.value.description,
-                        preparation = _uiState.value.preparation,
-                        calories = _uiState.value.calories
-                    )
-                )
-            ).catch {
+            val recipe = Recipe(
+                description = _uiState.value.description,
+                preparation = _uiState.value.preparation,
+                calories = _uiState.value.calories
+            )
+            if (_uiState.value.recipeId == -1) {
+                flowOf(recipeDao.insertRecipe(recipe)) // INSERT IS NOT WORKING WITH FLOW FOR SOME REASON
+            } else {
+                flowOf(recipeDao.updateRecipe(recipe))
+            }.catch {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = it.message)
             }.collect { recipeId ->
-                ingredientsDao.insertIngredients(
-                    *_uiState.value.ingredients.map {
-                        Ingredient(
-                            name = it.name,
-                            recipeId = recipeId.toInt(),
-                            amount = it.amount,
-                            unit = it.unit
-                        )
-                    }.toTypedArray()
-                )
+                val ingredients = _uiState.value.ingredients.map {
+                    Ingredient(
+                        ingredientId = it.ingredientId,
+                        name = it.name,
+                        recipeId = if (_uiState.value.recipeId == -1) recipeId.toInt() else _uiState.value.recipeId,
+                        amount = it.amount,
+                        unit = it.unit
+                    )
+                }.toTypedArray()
+                if (_uiState.value.recipeId == -1) {
+                    ingredientsDao.insertIngredients(*ingredients)
+                } else {
+                    ingredientsDao.updateIngredients(*ingredients)
+                }
                 _uiState.value = _uiState.value.copy(isLoading = false, error = null)
             }
         }

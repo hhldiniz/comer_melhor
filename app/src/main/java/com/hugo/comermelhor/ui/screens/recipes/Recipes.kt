@@ -36,7 +36,7 @@ fun RecipeScreen(
 ) {
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = {
-            navController.navigate(Screens.ADD_RECIPE.name)
+            navController.navigate(Screens.ADD_RECIPE.name + "/-1")
         }) {
             Icon(Icons.Default.Add, contentDescription = "Add")
         }
@@ -64,7 +64,7 @@ fun RecipeScreen(
             if (!state.isLoading && state.error == null) {
                 RecipeList(recipes = state.recipes, onItemClick = object : RecipeListHandlers {
                     override fun onRecipeDescriptionClick(recipe: Recipe) {
-                        navController.navigate(Screens.ADD_RECIPE.name)
+                        navController.navigate(Screens.ADD_RECIPE.name  + "/${recipe.recipeId}")
                     }
 
                     override fun onRecipeImageClick(recipe: Recipe) {

@@ -3,6 +3,7 @@ package com.hugo.comermelhor.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.hugo.comermelhor.data.model.Ingredient
 import kotlinx.coroutines.flow.Flow
 
@@ -13,4 +14,7 @@ interface IngredientsDao {
 
     @Insert
     suspend fun insertIngredients(vararg ingredients: Ingredient)
+
+    @Update
+    suspend fun updateIngredients(vararg ingredient: Ingredient)
 }

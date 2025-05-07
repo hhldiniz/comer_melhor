@@ -43,9 +43,11 @@ import com.hugo.comermelhor.ui.widgets.PrimaryButton
 fun AddRecipeScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
+    recipeId: Int,
     addRecipeViewModel: AddRecipeViewModel = viewModel()
 ) {
     val state by addRecipeViewModel.uiState.collectAsState()
+    addRecipeViewModel.loadRecipeWithIngredients(recipeId = recipeId)
     Scaffold(modifier = modifier.fillMaxSize(), topBar = {
         TopAppBar(
             title = { Text(stringResource(R.string.add_recipe_screen_title)) },
@@ -131,7 +133,7 @@ fun AddRecipeScreen(
                     text = stringResource(R.string.add_recipe_btn),
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
-                    addRecipeViewModel.addRecipe().invokeOnCompletion {
+                    addRecipeViewModel.addRecipeIfNotExists().invokeOnCompletion {
                         navController.navigateUp()
                     }
                 }
