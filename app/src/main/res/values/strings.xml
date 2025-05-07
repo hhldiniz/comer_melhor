@@ -16,6 +16,8 @@
     <string name="preparation_field_label">Preparação</string>
     <string name="calories">Calorias estimadas: %d</string>
 
+    <string name="add_recipe_screen_title">Nova Receita</string>
+
     <string name="ingredients_section_title">Ingredientes</string>
     <string name="ingredient_description_label">Ingrediente</string>
     <string name="ingredient_amount_description_label">Qtd.</string>
