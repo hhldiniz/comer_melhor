@@ -64,7 +64,7 @@ fun RecipeScreen(
             if (!state.isLoading && state.error == null) {
                 RecipeList(recipes = state.recipes, onItemClick = object : RecipeListHandlers {
                     override fun onRecipeDescriptionClick(recipe: Recipe) {
-
+                        navController.navigate(Screens.ADD_RECIPE.name)
                     }
 
                     override fun onRecipeImageClick(recipe: Recipe) {

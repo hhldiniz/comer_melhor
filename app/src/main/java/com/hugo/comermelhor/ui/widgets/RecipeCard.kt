@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -51,6 +52,7 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
                         .clickable {
                             onClick.onRecipeDescriptionClick(recipe)
                         },
@@ -58,14 +60,16 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "FOOD DESCRIPTION",
+                        recipe.description,
                         modifier = Modifier.padding(start = 8.dp),
                         textAlign = TextAlign.Center,
                         fontSize = 20.sp
                     )
-                    IconButton(onClick = {}) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "")
-                    }
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = ""
+                    )
                 }
             }
         }
