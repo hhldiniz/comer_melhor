@@ -118,6 +118,7 @@ private fun IngredientsSection(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
+                    .padding(start = 8.dp)
                     .align(Alignment.CenterVertically),
                 text = stringResource(R.string.ingredients_section_title)
             )

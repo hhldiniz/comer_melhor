@@ -38,12 +38,25 @@ class AddRecipeViewModel(
     }
 
     fun updateIngredient(ingredient: Ingredient) {
-        val ingredients = _uiState.value.ingredients.toMutableList()
-        ingredients.removeIf { it.ingredientId == ingredient.ingredientId }
-        ingredients.add(ingredient)
+        val ingredientsResult = mutableListOf<Ingredient>()
+        _uiState.value.ingredients.toMutableList().forEach {
+            if (it.ingredientId == ingredient.ingredientId) {
+                ingredientsResult.add(
+                    it.copy(
+                        ingredientId = ingredient.ingredientId,
+                        name = ingredient.name,
+                        recipeId = ingredient.recipeId,
+                        amount = ingredient.amount,
+                        unit = ingredient.unit
+                    )
+                )
+            } else {
+                ingredientsResult.add(it)
+            }
+        }
 
         _uiState.value =
-            _uiState.value.copy(ingredients = ingredients)
+            _uiState.value.copy(ingredients = ingredientsResult)
     }
 
     fun addIngredient(ingredient: Ingredient) {
