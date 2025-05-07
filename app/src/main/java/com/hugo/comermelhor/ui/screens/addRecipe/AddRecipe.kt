@@ -3,6 +3,7 @@ package com.hugo.comermelhor.ui.screens.addRecipe
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,81 +46,94 @@ fun AddRecipeScreen(
     addRecipeViewModel: AddRecipeViewModel = viewModel()
 ) {
     val state by addRecipeViewModel.uiState.collectAsState()
-    Scaffold(topBar = {
+    Scaffold(modifier = modifier.fillMaxSize(), topBar = {
         TopAppBar(
             title = { Text(stringResource(R.string.add_recipe_screen_title)) },
-            navigationIcon = { IconButton(onClick = {navController.navigateUp()}) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
-            } })
+            navigationIcon = {
+                IconButton(onClick = { navController.navigateUp() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                }
+            })
     }) {
         Column(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            if (state.isLoading) {
-                Loading()
-            } else {
-                if (state.error != null) {
-                    Error(
-                        errorViewType = ErrorViewType.Retry,
-                        message = stringResource(R.string.add_recipe_error_msg)
-                    )
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Card(modifier = Modifier.fillMaxWidth()) {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.85f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                item {
+                    if (state.isLoading) {
+                        Loading()
+                    } else {
+                        if (state.error != null) {
+                            Error(
+                                errorViewType = ErrorViewType.Retry,
+                                message = stringResource(R.string.add_recipe_error_msg)
+                            )
+                        } else {
                             Column(
-                                Modifier
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(8.dp)
                             ) {
-                                OutlinedTextField(
-                                    state.description,
-                                    label = { Text(stringResource(R.string.description_field_label)) },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    onValueChange = addRecipeViewModel::updateDescription
-                                )
-                                OutlinedTextField(
-                                    state.preparation,
-                                    singleLine = false,
-                                    label = { Text(stringResource(R.string.preparation_field_label)) },
+                                Card(modifier = Modifier.fillMaxWidth()) {
+                                    Column(
+                                        Modifier
+                                            .padding(8.dp)
+                                    ) {
+                                        OutlinedTextField(
+                                            state.description,
+                                            label = { Text(stringResource(R.string.description_field_label)) },
+                                            modifier = Modifier.fillMaxWidth(),
+                                            onValueChange = addRecipeViewModel::updateDescription
+                                        )
+                                        OutlinedTextField(
+                                            state.preparation,
+                                            singleLine = false,
+                                            label = { Text(stringResource(R.string.preparation_field_label)) },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(200.dp),
+                                            onValueChange = addRecipeViewModel::updatePreparation
+                                        )
+                                    }
+                                }
+
+                                IngredientsSection(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(200.dp),
-                                    onValueChange = addRecipeViewModel::updatePreparation
+                                        .height(400.dp)
+                                        .padding(top = 16.dp),
+                                    state = state,
+                                    addRecipeViewModel = addRecipeViewModel
                                 )
                             }
-                        }
 
-                        IngredientsSection(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(400.dp)
-                                .padding(top = 16.dp),
-                            state = state,
-                            addRecipeViewModel = addRecipeViewModel
-                        )
-                    }
-
-                    Column {
-                        Text(stringResource(R.string.calories, state.calories))
-
-                        PrimaryButton(
-                            text = stringResource(R.string.add_recipe_btn),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            addRecipeViewModel.addRecipe()
                         }
                     }
+                }
 
+            }
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(stringResource(R.string.calories, state.calories))
+
+                PrimaryButton(
+                    text = stringResource(R.string.add_recipe_btn),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    addRecipeViewModel.addRecipe()
                 }
             }
-
         }
 
     }
