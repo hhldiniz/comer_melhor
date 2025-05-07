@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Comer Melhor</string>
+    <string name="loading_label">Carregando…</string>
+    <string name="loading_recipes_error_msg">Erro ao carregar suas receitas</string>
+    <string name="add_recipe_error_msg">Erro ao adicionar receita</string>
+
+    <string name="retry_message">Clique para tentar novamente</string>
+
+    <string name="add_recipe_btn">Adicionar Receita</string>
+
+    <string name="yes_btn_label">Sim</string>
+    <string name="no_btn_label">Não</string>
+    <string name="retry_btn_label">Tentar Novamente</string>
+    
+    <string name="description_field_label">Descrição</string>
+    <string name="preparation_field_label">Preparação</string>
+    <string name="calories">Calorias estimadas: %d</string>
+
+    <string name="ingredients_section_title">Ingredientes</string>
+    <string name="ingredient_description_label">Ingrediente</string>
+    <string name="ingredient_amount_description_label">Qtd.</string>
+    <string name="ingredient_unit_description_label">Unid.</string>
+</resources>
