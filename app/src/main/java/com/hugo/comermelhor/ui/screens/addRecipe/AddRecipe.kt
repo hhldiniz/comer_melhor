@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,7 +48,9 @@ fun AddRecipeScreen(
     addRecipeViewModel: AddRecipeViewModel = viewModel()
 ) {
     val state by addRecipeViewModel.uiState.collectAsState()
-    addRecipeViewModel.loadRecipeWithIngredients(recipeId = recipeId)
+    LaunchedEffect(recipeId) {
+        addRecipeViewModel.loadRecipeWithIngredients(recipeId = recipeId)
+    }
     Scaffold(modifier = modifier.fillMaxSize(), topBar = {
         TopAppBar(
             title = { Text(stringResource(R.string.add_recipe_screen_title)) },

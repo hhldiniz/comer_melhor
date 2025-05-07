@@ -80,14 +80,15 @@ class AddRecipeViewModel(
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         return viewModelScope.launch {
             val recipe = Recipe(
+                recipeId = if (isEditing()) _uiState.value.recipeId else -1,
                 description = _uiState.value.description,
                 preparation = _uiState.value.preparation,
                 calories = _uiState.value.calories
             )
-            if (_uiState.value.recipeId == -1) {
-                flowOf(recipeDao.insertRecipe(recipe)) // INSERT IS NOT WORKING WITH FLOW FOR SOME REASON
-            } else {
+            if (isEditing()) {
                 flowOf(recipeDao.updateRecipe(recipe))
+            } else {
+                flowOf(recipeDao.insertRecipe(recipe)) // INSERT IS NOT WORKING WITH FLOW FOR SOME REASON
             }.catch {
                 _uiState.value = _uiState.value.copy(isLoading = false, error = it.message)
             }.collect { recipeId ->
@@ -95,18 +96,22 @@ class AddRecipeViewModel(
                     Ingredient(
                         ingredientId = it.ingredientId,
                         name = it.name,
-                        recipeId = if (_uiState.value.recipeId == -1) recipeId.toInt() else _uiState.value.recipeId,
+                        recipeId = if (isEditing()) _uiState.value.recipeId else recipeId.toInt(),
                         amount = it.amount,
                         unit = it.unit
                     )
                 }.toTypedArray()
-                if (_uiState.value.recipeId == -1) {
-                    ingredientsDao.insertIngredients(*ingredients)
-                } else {
+                if (isEditing()) {
                     ingredientsDao.updateIngredients(*ingredients)
+                } else {
+                    ingredientsDao.insertIngredients(*ingredients)
                 }
                 _uiState.value = _uiState.value.copy(isLoading = false, error = null)
             }
         }
+    }
+
+    private fun isEditing(): Boolean {
+        return _uiState.value.recipeId != -1
     }
 }
