@@ -20,15 +20,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.hugo.comermelhor.android.widgets.RecipeList
+import com.hugo.comermelhor.R
+import com.hugo.comermelhor.ui.widgets.RecipeList
 import com.hugo.comermelhor.android.widgets.RecipeListHandlers
 import com.hugo.comermelhor.data.model.Recipe
+import com.hugo.comermelhor.ui.navigation.Screens
 import com.hugo.comermelhor.ui.widgets.Error
 import com.hugo.comermelhor.ui.widgets.ErrorViewType
 import com.hugo.comermelhor.ui.widgets.Loading
-import com.hugo.comermelhor.R
-import com.hugo.comermelhor.ui.navigation.Screens
 
 @Composable
 fun RecipeScreen(
@@ -62,8 +61,8 @@ fun RecipeScreen(
                     }
                 )
             }
-            if (!state.isLoading && state.error != null) {
-                RecipeList(recipes = state.recipes, object : RecipeListHandlers {
+            if (!state.isLoading && state.error == null) {
+                RecipeList(recipes = state.recipes, onItemClick = object : RecipeListHandlers {
                     override fun onRecipeDescriptionClick(recipe: Recipe) {
 
                     }
