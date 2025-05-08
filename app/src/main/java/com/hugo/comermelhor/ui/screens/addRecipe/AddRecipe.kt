@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -179,31 +180,61 @@ private fun IngredientsSection(
             modifier = Modifier.fillMaxSize()
         ) {
             items(state.ingredients) { ingredient ->
-                Row {
-                    OutlinedTextField(
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    elevation = CardDefaults.cardElevation(8.dp)
+                ) {
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth(0.6f)
-                            .padding(horizontal = 4.dp),
-                        value = ingredient.name,
-                        label = { Text(stringResource(R.string.ingredient_description_label)) },
-                        onValueChange = { addRecipeViewModel.updateIngredient(ingredient.copy(name = it)) }
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth(0.45f)
-                            .padding(horizontal = 4.dp),
-                        value = ingredient.amount.toString(),
-                        label = { Text(stringResource(R.string.ingredient_amount_description_label)) },
-                        onValueChange = { addRecipeViewModel.updateIngredient(ingredient.copy(amount = it.toFloat())) }
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(horizontal = 4.dp),
-                        value = ingredient.unit,
-                        label = { Text(stringResource(R.string.ingredient_unit_description_label)) },
-                        onValueChange = { addRecipeViewModel.updateIngredient(ingredient.copy(unit = it)) }
-                    )
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 4.dp),
+                            value = ingredient.name,
+                            label = { Text(stringResource(R.string.ingredient_description_label)) },
+                            onValueChange = {
+                                addRecipeViewModel.updateIngredient(
+                                    ingredient.copy(
+                                        name = it
+                                    )
+                                )
+                            }
+                        )
+                        Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.5f)
+                                    .padding(horizontal = 4.dp),
+                                value = ingredient.amount.toString(),
+                                label = { Text(stringResource(R.string.ingredient_amount_description_label)) },
+                                onValueChange = {
+                                    addRecipeViewModel.updateIngredient(
+                                        ingredient.copy(
+                                            amount = it.toFloat()
+                                        )
+                                    )
+                                }
+                            )
+                            OutlinedTextField(
+                                modifier = Modifier
+                                    .fillMaxWidth(1f)
+                                    .padding(horizontal = 4.dp),
+                                value = ingredient.unit,
+                                label = { Text(stringResource(R.string.ingredient_unit_description_label)) },
+                                onValueChange = {
+                                    addRecipeViewModel.updateIngredient(
+                                        ingredient.copy(
+                                            unit = it
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                        HorizontalDivider(modifier = Modifier.padding(8.dp))
+                    }
                 }
             }
         }
