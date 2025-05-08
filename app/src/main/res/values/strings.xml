@@ -22,4 +22,5 @@
     <string name="ingredient_description_label">Ingrediente</string>
     <string name="ingredient_amount_description_label">Qtd.</string>
     <string name="ingredient_unit_description_label">Unid.</string>
+    <string name="no_recipes_found">Nenhuma receita para mostrar</string>
 </resources>
