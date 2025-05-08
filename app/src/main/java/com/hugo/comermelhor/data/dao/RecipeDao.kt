@@ -1,6 +1,7 @@
 package com.hugo.comermelhor.data.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -24,4 +25,7 @@ interface RecipeDao {
     @Update
     @Transaction
     suspend fun updateRecipe(recipe: Recipe): Int
+
+    @Delete
+    suspend fun deleteRecipe(recipe: Recipe): Int
 }

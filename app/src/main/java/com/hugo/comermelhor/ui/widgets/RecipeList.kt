@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hugo.comermelhor.android.widgets.RecipeListHandlers
 import com.hugo.comermelhor.data.model.Recipe
 
 @Composable

@@ -22,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hugo.comermelhor.R
 import com.hugo.comermelhor.ui.widgets.RecipeList
-import com.hugo.comermelhor.android.widgets.RecipeListHandlers
+import com.hugo.comermelhor.ui.widgets.RecipeListHandlers
 import com.hugo.comermelhor.data.model.Recipe
 import com.hugo.comermelhor.ui.navigation.Screens
 import com.hugo.comermelhor.ui.widgets.Error
@@ -69,6 +69,10 @@ fun RecipeScreen(
 
                     override fun onRecipeImageClick(recipe: Recipe) {
 
+                    }
+
+                    override fun onItemDelete(recipe: Recipe) {
+                        recipesViewModel.deleteRecipe(recipe)
                     }
                 })
             }
