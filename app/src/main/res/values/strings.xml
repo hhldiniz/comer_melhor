@@ -3,6 +3,7 @@
     <string name="loading_label">Carregando…</string>
     <string name="loading_recipes_error_msg">Erro ao carregar suas receitas</string>
     <string name="add_recipe_error_msg">Erro ao adicionar receita</string>
+    <string name="recipe_delete_confirmation">Tem certeza que deseja remover a receita ?</string>
 
     <string name="retry_message">Clique para tentar novamente</string>
 

@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.recipes
 
+import android.app.AlertDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -19,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,19 +30,20 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.hugo.comermelhor.R
-import com.hugo.comermelhor.ui.widgets.RecipeList
-import com.hugo.comermelhor.ui.widgets.RecipeListHandlers
 import com.hugo.comermelhor.data.model.Recipe
 import com.hugo.comermelhor.ui.navigation.Screens
 import com.hugo.comermelhor.ui.widgets.Error
 import com.hugo.comermelhor.ui.widgets.ErrorViewType
 import com.hugo.comermelhor.ui.widgets.Loading
+import com.hugo.comermelhor.ui.widgets.RecipeList
+import com.hugo.comermelhor.ui.widgets.RecipeListHandlers
 
 @Composable
 fun RecipeScreen(
     navController: NavController,
     recipesViewModel: RecipesViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = {
             navController.navigate(Screens.ADD_RECIPE.name + "/-1")
@@ -97,7 +101,15 @@ fun RecipeScreen(
                     }
 
                     override fun onItemDelete(recipe: Recipe) {
-                        recipesViewModel.deleteRecipe(recipe)
+                        val dialog = AlertDialog.Builder(context)
+                            .setMessage(R.string.recipe_delete_confirmation)
+                            .setPositiveButton(R.string.yes_btn_label) { _, _ ->
+                                recipesViewModel.deleteRecipe(recipe)
+                            }
+                            .setNegativeButton(R.string.no_btn_label) { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                        dialog.show()
                     }
                 })
             }
