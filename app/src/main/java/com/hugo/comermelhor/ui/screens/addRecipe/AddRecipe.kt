@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -180,7 +184,9 @@ private fun IngredientsSection(
         ) {
             items(state.ingredients) { ingredient ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     elevation = CardDefaults.cardElevation(8.dp)
                 ) {
                     Column(
@@ -202,21 +208,56 @@ private fun IngredientsSection(
                                 )
                             }
                         )
-                        Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth(0.5f)
                                     .padding(horizontal = 4.dp),
+                                enabled = false,
                                 value = ingredient.amount.toString(),
+                                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                                 label = { Text(stringResource(R.string.ingredient_amount_description_label)) },
-                                onValueChange = {
-                                    addRecipeViewModel.updateIngredient(
-                                        ingredient.copy(
-                                            amount = it.toFloat()
-                                        )
-                                    )
-                                }
+                                onValueChange = {}
                             )
+                            Column(verticalArrangement = Arrangement.Center) {
+                                Icon(
+                                    modifier = Modifier.combinedClickable(
+                                        onClick = {
+                                            handleIngredientAmountChange(
+                                                ingredient,
+                                                ingredient.amount + 0.25f,
+                                                addRecipeViewModel
+                                            )
+                                        },
+                                        onLongClick = {
+                                            handleIngredientAmountChange(
+                                                ingredient,
+                                                ingredient.amount + 1f,
+                                                addRecipeViewModel
+                                            )
+                                        }
+                                    ), imageVector = Icons.Default.Add, contentDescription = "")
+                                Icon(
+                                    modifier = Modifier.combinedClickable(
+                                        onClick = {
+                                            handleIngredientAmountChange(
+                                                ingredient,
+                                                ingredient.amount - 0.25f,
+                                                addRecipeViewModel
+                                            )
+                                        },
+                                        onLongClick = {
+                                            handleIngredientAmountChange(
+                                                ingredient,
+                                                ingredient.amount - 1f,
+                                                addRecipeViewModel
+                                            )
+                                        }
+                                    ), imageVector = Icons.Default.Remove, contentDescription = "")
+                            }
                             OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth(1f)
@@ -237,4 +278,19 @@ private fun IngredientsSection(
             }
         }
     }
+}
+
+private fun handleIngredientAmountChange(
+    ingredient: Ingredient,
+    newAmount: Float,
+    addRecipeViewModel: AddRecipeViewModel
+) {
+    var newValue = newAmount
+    if (newValue < 0)
+        newValue = 0f
+    addRecipeViewModel.updateIngredient(
+        ingredient.copy(
+            amount = newValue
+        )
+    )
 }
