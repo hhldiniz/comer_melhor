@@ -10,6 +10,7 @@ import com.hugo.comermelhor.data.model.Recipe
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -80,7 +81,7 @@ class AddRecipeViewModel(
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         return viewModelScope.launch {
             val recipe = Recipe(
-                recipeId = if (isEditing()) _uiState.value.recipeId else -1,
+                recipeId = if (isEditing()) _uiState.value.recipeId else null,
                 description = _uiState.value.description,
                 preparation = _uiState.value.preparation,
                 calories = _uiState.value.calories
@@ -101,12 +102,17 @@ class AddRecipeViewModel(
                         unit = it.unit
                     )
                 }.toTypedArray()
-                if (isEditing()) {
-                    ingredientsDao.updateIngredients(*ingredients)
-                } else {
-                    ingredientsDao.insertIngredients(*ingredients)
+                flow<Unit> {
+                    if (isEditing()) {
+                        ingredientsDao.updateIngredients(*ingredients)
+                    } else {
+                        ingredientsDao.insertIngredients(*ingredients)
+                    }
+                }.catch { error ->
+                    _uiState.value = _uiState.value.copy(isLoading = false, error = error.message)
+                }.collect {
+                    _uiState.value = _uiState.value.copy(isLoading = false, error = null)
                 }
-                _uiState.value = _uiState.value.copy(isLoading = false, error = null)
             }
         }
     }
