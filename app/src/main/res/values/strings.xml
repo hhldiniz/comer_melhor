@@ -15,6 +15,14 @@
     
     <string name="description_field_label">Descrição</string>
     <string name="preparation_field_label">Preparação</string>
+    <string-array name="ingredients_units">
+        <item>Gramas</item>
+        <item>Quilos</item>
+        <item>Mililitros</item>
+        <item>Litros</item>
+        <item>Unidades</item>
+        <item>Dúzias</item>
+    </string-array>
     <string name="calories">Calorias estimadas: %d</string>
 
     <string name="add_recipe_screen_title">Nova Receita</string>
