@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,13 +25,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -217,6 +222,7 @@ private fun IngredientsSection(
                                     .fillMaxWidth(0.5f)
                                     .padding(horizontal = 4.dp),
                                 enabled = false,
+                                colors = TextFieldDefaults.colors(disabledTextColor = Color.White),
                                 value = ingredient.amount.toString(),
                                 label = { Text(stringResource(R.string.ingredient_amount_description_label)) },
                                 onValueChange = {}
@@ -257,19 +263,36 @@ private fun IngredientsSection(
                                         }
                                     ), imageVector = Icons.Default.Remove, contentDescription = "")
                             }
-                            IngredientUnitSelection(items = stringArrayResource(R.array.ingredients_units).map {
-                                {
-                                    DropdownMenuItem(text = { Text(it) }, onClick = {
-                                        addRecipeViewModel.updateIngredient(
-                                            ingredient.copy(
-                                                unit = it
+                            val ingredientUnitDropdownExpanded = remember { mutableStateOf(false) }
+                            IngredientUnitSelection(
+                                modifier = Modifier.fillMaxSize(),
+                                items = stringArrayResource(R.array.ingredients_units).map {
+                                    {
+                                        DropdownMenuItem(text = { Text(it) }, onClick = {
+                                            addRecipeViewModel.updateIngredient(
+                                                ingredient.copy(
+                                                    unit = it
+                                                )
                                             )
-                                        )
-                                    })
-                                }
-                            }) {
-                                Text(ingredient.unit.ifBlank { stringResource(R.string.ingredient_unit_description_label) })
-                            }
+                                            ingredientUnitDropdownExpanded.value = false
+                                        })
+                                    }
+                                },
+                                onDismissRequest = { ingredientUnitDropdownExpanded.value = false },
+                                expanded = ingredientUnitDropdownExpanded.value,
+                                dropdownMenuFace = {
+                                    OutlinedTextField(
+                                        modifier = Modifier
+                                            .clickable {
+                                                ingredientUnitDropdownExpanded.value = true
+                                            }
+                                            .fillMaxSize(),
+                                        colors = TextFieldDefaults.colors(disabledTextColor = Color.White),
+                                        enabled = false,
+                                        value = ingredient.unit,
+                                        label = { Text(stringResource(R.string.ingredient_unit_description_label)) },
+                                        onValueChange = {})
+                                })
                         }
                     }
                 }
@@ -280,10 +303,19 @@ private fun IngredientsSection(
 
 @Composable
 private fun IngredientUnitSelection(
+    modifier: Modifier = Modifier,
     items: List<@Composable () -> Unit>,
-    dropdownMenuFace: @Composable () -> Unit
+    dropdownMenuFace: @Composable () -> Unit,
+    expanded: Boolean = false,
+    onDismissRequest: () -> Unit = { }
 ) {
-    com.hugo.comermelhor.ui.widgets.DropdownMenu(items = items, dropdownMenuFace = dropdownMenuFace)
+    com.hugo.comermelhor.ui.widgets.DropdownMenu(
+        modifier = modifier,
+        items = items,
+        dropdownMenuFace = dropdownMenuFace,
+        onDismissRequest = onDismissRequest,
+        expanded = expanded
+    )
 }
 
 private fun handleIngredientAmountChange(

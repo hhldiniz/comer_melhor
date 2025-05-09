@@ -1,35 +1,27 @@
 package com.hugo.comermelhor.ui.widgets
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
 @Composable
 fun DropdownMenu(
+    modifier: Modifier = Modifier,
     items: List<@Composable () -> Unit>,
+    expanded: Boolean = false,
     onDismissRequest: () -> Unit = {},
     dropdownMenuFace: @Composable () -> Unit
 ) {
-    val ingredientUnitDropdownExpanded = remember { mutableStateOf(false) }
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                ingredientUnitDropdownExpanded.value = true
-            }
+        modifier = modifier.fillMaxWidth()
     ) {
         dropdownMenuFace()
         androidx.compose.material3.DropdownMenu(
             modifier = Modifier.fillMaxWidth(),
-            expanded = ingredientUnitDropdownExpanded.value,
-            onDismissRequest = {
-                ingredientUnitDropdownExpanded.value = false
-                onDismissRequest()
-            }) {
+            expanded = expanded,
+            onDismissRequest = onDismissRequest
+        ) {
             items.forEach { item ->
                 item()
             }
