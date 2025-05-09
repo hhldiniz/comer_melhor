@@ -36,6 +36,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -161,6 +163,7 @@ private fun IngredientsSection(
     state: AddRecipeViewState,
     addRecipeViewModel: AddRecipeViewModel
 ) {
+    val haptics = LocalHapticFeedback.current
     Card(modifier = modifier, elevation = CardDefaults.cardElevation(8.dp)) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(
@@ -243,6 +246,7 @@ private fun IngredientsSection(
                                                 ingredient.amount + 1f,
                                                 addRecipeViewModel
                                             )
+                                            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                         }
                                     ), imageVector = Icons.Default.Add, contentDescription = "")
                                 Icon(
