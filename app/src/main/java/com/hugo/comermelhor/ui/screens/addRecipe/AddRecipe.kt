@@ -236,14 +236,14 @@ private fun IngredientsSection(
                                         onClick = {
                                             handleIngredientAmountChange(
                                                 ingredient,
-                                                ingredient.amount + 0.25f,
+                                           + 0.25f,
                                                 addRecipeViewModel
                                             )
                                         },
                                         onLongClick = {
                                             handleIngredientAmountChange(
                                                 ingredient,
-                                                ingredient.amount + 1f,
+                                                 + 1f,
                                                 addRecipeViewModel
                                             )
                                             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
@@ -254,14 +254,14 @@ private fun IngredientsSection(
                                         onClick = {
                                             handleIngredientAmountChange(
                                                 ingredient,
-                                                ingredient.amount - 0.25f,
+                                                 - 0.25f,
                                                 addRecipeViewModel
                                             )
                                         },
                                         onLongClick = {
                                             handleIngredientAmountChange(
                                                 ingredient,
-                                                ingredient.amount - 1f,
+                                                 - 1f,
                                                 addRecipeViewModel
                                             )
                                         }
@@ -324,10 +324,10 @@ private fun IngredientUnitSelection(
 
 private fun handleIngredientAmountChange(
     ingredient: Ingredient,
-    newAmount: Float,
+    amountDelta: Float,
     addRecipeViewModel: AddRecipeViewModel
 ) {
-    var newValue = newAmount
+    var newValue = ingredient.amount + amountDelta
     if (newValue < 0)
         newValue = 0f
     addRecipeViewModel.updateIngredient(
