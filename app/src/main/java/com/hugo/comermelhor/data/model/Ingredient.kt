@@ -15,7 +15,7 @@ import androidx.room.PrimaryKey
     indices = [Index(value = ["recipeId"])]
 )
 data class Ingredient(
-    @PrimaryKey(autoGenerate = true) val ingredientId: Int = 0,
+    @PrimaryKey(autoGenerate = true) val ingredientId: Int? = null,
     val name: String,
     val recipeId: Int,
     val amount: Float,

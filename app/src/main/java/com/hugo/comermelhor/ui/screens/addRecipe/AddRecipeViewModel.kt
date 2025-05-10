@@ -55,7 +55,7 @@ class AddRecipeViewModel(
                     it.copy(
                         ingredientId = ingredient.ingredientId,
                         name = ingredient.name,
-                        recipeId = ingredient.recipeId,
+                        recipeId = _uiState.value.recipeId,
                         amount = ingredient.amount,
                         unit = ingredient.unit
                     )
@@ -95,19 +95,15 @@ class AddRecipeViewModel(
             }.collect { recipeId ->
                 val ingredients = _uiState.value.ingredients.map {
                     Ingredient(
-                        ingredientId = it.ingredientId,
+                        ingredientId = if (isEditing()) it.ingredientId else null,
                         name = it.name,
                         recipeId = if (isEditing()) _uiState.value.recipeId else recipeId.toInt(),
                         amount = it.amount,
                         unit = it.unit
                     )
-                }.toTypedArray()
+                }
                 flow<Unit> {
-                    if (isEditing()) {
-                        ingredientsDao.updateIngredients(*ingredients)
-                    } else {
-                        ingredientsDao.insertIngredients(*ingredients)
-                    }
+                    ingredientsDao.insertIngredients(*ingredients.toTypedArray())
                 }.catch { error ->
                     _uiState.value = _uiState.value.copy(isLoading = false, error = error.message)
                 }.collect {
