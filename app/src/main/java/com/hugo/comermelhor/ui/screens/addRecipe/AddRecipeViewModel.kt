@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
 
 class AddRecipeViewModel(
     private val recipeDao: RecipeDao = App.instance?.db?.recipeDao()!!,
@@ -32,6 +34,7 @@ class AddRecipeViewModel(
                         preparation = it.recipe.preparation,
                         calories = it.recipe.calories,
                         ingredients = it.ingredients,
+                        recipeImage = it.recipe.imageUri?.toUri(),
                         isLoading = false, error = null
                     )
                 }
@@ -69,6 +72,10 @@ class AddRecipeViewModel(
             _uiState.value.copy(ingredients = ingredientsResult)
     }
 
+    fun updateImage(imageUri: Uri) {
+        _uiState.value = _uiState.value.copy(recipeImage = imageUri)
+    }
+
     fun addIngredient(ingredient: Ingredient) {
         val ingredients = _uiState.value.ingredients.toMutableList()
         ingredients.add(ingredient)
@@ -84,7 +91,8 @@ class AddRecipeViewModel(
                 recipeId = if (isEditing()) _uiState.value.recipeId else null,
                 description = _uiState.value.description,
                 preparation = _uiState.value.preparation,
-                calories = _uiState.value.calories
+                calories = _uiState.value.calories,
+                imageUri = _uiState.value.recipeImage?.toString()
             )
             if (isEditing()) {
                 flowOf(recipeDao.updateRecipe(recipe))

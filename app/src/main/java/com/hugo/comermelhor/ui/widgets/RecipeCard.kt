@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.widgets
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,16 +45,21 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
         ) {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                 AsyncImage(
-                    model = recipe.imageUri?.toUri()
-                        ?: painterResource(android.R.drawable.ic_menu_camera),
+                    model = recipe.imageUri?.toUri(),
                     placeholder = painterResource(android.R.drawable.ic_menu_camera),
                     contentScale = ContentScale.Crop,
                     contentDescription = "",
+                    error = painterResource(android.R.drawable.stat_notify_error),
+                    fallback = painterResource(android.R.drawable.ic_menu_camera),
+                    onError = {
+                        Log.e("RecipeCard", "Error loading image: ${recipe.imageUri}")
+                    },
                     modifier = modifier
                         .clickable {
                             onClick.onRecipeImageClick(recipe)
                         }
-                        .fillMaxWidth().fillMaxHeight(0.9f)
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.9f)
                 )
                 IconButton(onClick = { onClick.onItemDelete(recipe) }) {
                     Icon(

@@ -16,8 +16,6 @@ class RecipesViewModel(private val recipesDao: RecipeDao = App.instance?.db?.rec
     private val _viewState = MutableStateFlow(RecipesViewState())
     val viewState = _viewState
     private var _lastClickedRecipe: Recipe? = null
-    val lastClickedRecipe: Recipe?
-        get() = _lastClickedRecipe
 
     init {
         getRecipes()
