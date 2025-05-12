@@ -30,9 +30,17 @@ class RecipesViewModel(private val recipesDao: RecipeDao = App.instance?.db?.rec
 
     fun updateImageForClickedRecipe(uri: Uri) {
         val recipeToUpdate = _lastClickedRecipe?.copy(imageUri = uri.toString())!!
-        _viewState.value =
-            _viewState.value.copy(recipes = _viewState.value.recipes.map { if (it.recipeId == recipeToUpdate.recipeId) recipeToUpdate else it }
-                .toMutableList())
+        _viewState.value = _viewState.value.copy(isLoading = true, error = null)
+        viewModelScope.launch {
+            flowOf(recipesDao.updateRecipe(recipeToUpdate)).catch { error ->
+                _viewState.value = _viewState.value.copy(isLoading = false, error = error.message)
+            }.collect {
+                _viewState.value = _viewState.value.copy(isLoading = false, error = null)
+                _viewState.value =
+                    _viewState.value.copy(recipes = _viewState.value.recipes.map { if (it.recipeId == recipeToUpdate.recipeId) recipeToUpdate else it }
+                        .toMutableList())
+            }
+        }
     }
 
     fun getRecipes() {
