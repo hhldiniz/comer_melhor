@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,12 +44,18 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
         ) {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                 AsyncImage(
-                    model = recipe.imageUri?.toUri() ?: "https://placehold.co/900x700/png",
+                    model = recipe.imageUri?.toUri()
+                        ?: painterResource(android.R.drawable.ic_menu_camera),
+                    placeholder = painterResource(android.R.drawable.ic_menu_camera),
+                    contentScale = ContentScale.Crop,
                     contentDescription = "",
-                    modifier.clickable {
-                        onClick.onRecipeImageClick(recipe)
-                    }.fillMaxWidth())
-                IconButton(onClick = {onClick.onItemDelete(recipe)}) {
+                    modifier = modifier
+                        .clickable {
+                            onClick.onRecipeImageClick(recipe)
+                        }
+                        .fillMaxWidth().fillMaxHeight(0.9f)
+                )
+                IconButton(onClick = { onClick.onItemDelete(recipe) }) {
                     Icon(
                         modifier = Modifier
                             .size(36.dp)
