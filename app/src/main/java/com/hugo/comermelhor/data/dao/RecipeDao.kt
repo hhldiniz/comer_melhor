@@ -3,6 +3,7 @@ package com.hugo.comermelhor.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -15,7 +16,7 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes")
     fun getRecipes(): Flow<List<Recipe>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecipe(recipe: Recipe): Long
 
     @Transaction

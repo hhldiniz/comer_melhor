@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.recipes
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
@@ -14,9 +15,24 @@ class RecipesViewModel(private val recipesDao: RecipeDao = App.instance?.db?.rec
     ViewModel() {
     private val _viewState = MutableStateFlow(RecipesViewState())
     val viewState = _viewState
+    private var _lastClickedRecipe: Recipe? = null
+    val lastClickedRecipe: Recipe?
+        get() = _lastClickedRecipe
 
     init {
         getRecipes()
+    }
+
+    //Only used when clicked on a recipe image because it has to be accessed in a Composable context later on
+    fun onRecipeClicked(recipe: Recipe) {
+        _lastClickedRecipe = recipe
+    }
+
+    fun updateImageForClickedRecipe(uri: Uri) {
+        val recipeToUpdate = _lastClickedRecipe?.copy(imageUri = uri.toString())!!
+        _viewState.value =
+            _viewState.value.copy(recipes = _viewState.value.recipes.map { if (it.recipeId == recipeToUpdate.recipeId) recipeToUpdate else it }
+                .toMutableList())
     }
 
     fun getRecipes() {

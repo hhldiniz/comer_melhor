@@ -1,6 +1,8 @@
 package com.hugo.comermelhor.ui.screens.recipes
 
 import android.app.AlertDialog
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -90,13 +92,22 @@ fun RecipeScreen(
                         )
                     }
                 }
+                val galleryLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.GetContent(),
+                    onResult = { uri ->
+                        uri?.let { resource ->
+                            recipesViewModel.updateImageForClickedRecipe(resource)
+                        }
+                    }
+                )
                 RecipeList(recipes = state.recipes, onItemClick = object : RecipeListHandlers {
                     override fun onRecipeDescriptionClick(recipe: Recipe) {
                         navController.navigate(Screens.ADD_RECIPE.name + "/${recipe.recipeId}")
                     }
 
                     override fun onRecipeImageClick(recipe: Recipe) {
-
+                        recipesViewModel.onRecipeClicked(recipe)
+                        galleryLauncher.launch("image/*")
                     }
 
                     override fun onItemDelete(recipe: Recipe) {

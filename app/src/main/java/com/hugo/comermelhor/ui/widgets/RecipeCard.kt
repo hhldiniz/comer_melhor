@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import com.hugo.comermelhor.data.model.Recipe
 
@@ -40,11 +41,11 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
         ) {
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                 AsyncImage(
-                    model = "https://placehold.co/900x700/png",
+                    model = recipe.imageUri?.toUri() ?: "https://placehold.co/900x700/png",
                     contentDescription = "",
                     modifier.clickable {
                         onClick.onRecipeImageClick(recipe)
-                    })
+                    }.fillMaxWidth())
                 IconButton(onClick = {onClick.onItemDelete(recipe)}) {
                     Icon(
                         modifier = Modifier
