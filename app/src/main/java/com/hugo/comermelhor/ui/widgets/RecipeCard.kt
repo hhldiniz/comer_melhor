@@ -71,12 +71,15 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                         .clickable {
                             onClick.onRecipeImageClick(recipe)
                         }
-                        .fillMaxSize().clip(RoundedCornerShape(12.dp))
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(12.dp))
 
                 )
                 val dropdownOpenState = remember { mutableStateOf(false) }
                 DropdownMenu(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, end = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, end = 8.dp),
                     items = listOf {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.recipe_share_label)) },
@@ -111,7 +114,10 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
             }
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .clickable {
+                        onClick.onRecipeDescriptionClick(recipe)
+                    },
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -119,16 +125,15 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                 Row(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                        .clickable {
-                            onClick.onRecipeDescriptionClick(recipe)
-                        },
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         recipe.description,
-                        modifier = Modifier.padding(start = 8.dp).fillMaxWidth(0.9f),
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .fillMaxWidth(0.9f),
                         fontSize = 20.sp
                     )
                     Icon(
