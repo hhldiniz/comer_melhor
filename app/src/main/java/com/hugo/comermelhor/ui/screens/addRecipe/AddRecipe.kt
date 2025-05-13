@@ -1,5 +1,6 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
+import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
@@ -52,6 +54,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.hugo.comermelhor.R
 import com.hugo.comermelhor.data.model.Ingredient
+import com.hugo.comermelhor.ui.util.extensions.takePermission
 import com.hugo.comermelhor.ui.widgets.Error
 import com.hugo.comermelhor.ui.widgets.ErrorViewType
 import com.hugo.comermelhor.ui.widgets.Loading
@@ -66,6 +69,7 @@ fun AddRecipeScreen(
     addRecipeViewModel: AddRecipeViewModel = viewModel()
 ) {
     val state by addRecipeViewModel.uiState.collectAsState()
+    val context = LocalContext.current
     LaunchedEffect(recipeId) {
         addRecipeViewModel.loadRecipeWithIngredients(recipeId = recipeId)
     }
@@ -99,7 +103,13 @@ fun AddRecipeScreen(
                             contract = ActivityResultContracts.GetContent(),
                             onResult = { uri ->
                                 uri?.let { resource ->
-                                    addRecipeViewModel.updateImage(resource)
+                                    resource.takePermission(context, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                        .onSuccess {
+                                            addRecipeViewModel.updateImage(resource)
+                                        }.onFailure { exception ->
+                                            if (exception is SecurityException)
+                                                addRecipeViewModel.dispatchError(context.getString(R.string.permission_error))
+                                        }
                                 }
                             }
                         )

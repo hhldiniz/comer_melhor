@@ -17,6 +17,8 @@
         %f %s de %s
     </string>
 
+    <string name="permission_error">Permissão não concedida</string>
+
     <string name="retry_message">Clique para tentar novamente</string>
 
     <string name="add_recipe_btn">Adicionar Receita</string>

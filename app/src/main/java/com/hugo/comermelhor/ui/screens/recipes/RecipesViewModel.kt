@@ -72,4 +72,8 @@ class RecipesViewModel(private val recipesDao: RecipeDao = App.instance?.db?.rec
     fun getIngredientsForRecipe(recipe: Recipe): Flow<RecipeWithIngredients> {
         return recipesDao.getRecipeWithIngredientsById(recipe.recipeId ?: 0)
     }
+
+    fun dispatchError(error: String) {
+        _viewState.value = _viewState.value.copy(error = error)
+    }
 }

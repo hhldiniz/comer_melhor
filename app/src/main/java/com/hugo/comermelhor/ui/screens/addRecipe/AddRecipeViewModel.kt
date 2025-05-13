@@ -124,4 +124,8 @@ class AddRecipeViewModel(
     private fun isEditing(): Boolean {
         return _uiState.value.recipeId != -1
     }
+
+    fun dispatchError(string: String) {
+        _uiState.value = _uiState.value.copy(error = string)
+    }
 }

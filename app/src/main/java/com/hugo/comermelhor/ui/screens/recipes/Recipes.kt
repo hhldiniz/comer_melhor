@@ -1,6 +1,7 @@
 package com.hugo.comermelhor.ui.screens.recipes
 
 import android.app.AlertDialog
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -35,6 +36,7 @@ import com.hugo.comermelhor.R
 import com.hugo.comermelhor.data.model.Recipe
 import com.hugo.comermelhor.ui.navigation.Screens
 import com.hugo.comermelhor.ui.util.ContentSharer
+import com.hugo.comermelhor.ui.util.extensions.takePermission
 import com.hugo.comermelhor.ui.widgets.Error
 import com.hugo.comermelhor.ui.widgets.ErrorViewType
 import com.hugo.comermelhor.ui.widgets.Loading
@@ -100,7 +102,13 @@ fun RecipeScreen(
                     contract = ActivityResultContracts.GetContent(),
                     onResult = { uri ->
                         uri?.let { resource ->
-                            recipesViewModel.updateImageForClickedRecipe(resource)
+                            resource.takePermission(context, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                .onSuccess {
+                                    recipesViewModel.updateImageForClickedRecipe(resource)
+                                }.onFailure { exception ->
+                                if (exception is SecurityException)
+                                    recipesViewModel.dispatchError(context.getString(R.string.permission_error))
+                            }
                         }
                     }
                 )
