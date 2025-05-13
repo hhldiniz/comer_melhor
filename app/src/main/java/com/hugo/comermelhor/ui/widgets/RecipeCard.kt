@@ -14,25 +14,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
+import com.hugo.comermelhor.R
 import com.hugo.comermelhor.data.model.Recipe
+import com.hugo.comermelhor.ui.util.ContentSharer
 
 @Composable
 fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeListHandlers) {
@@ -61,15 +72,46 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                         .fillMaxWidth()
                         .fillMaxHeight(0.9f)
                 )
-                IconButton(onClick = { onClick.onItemDelete(recipe) }) {
-                    Icon(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .padding(end = 8.dp, top = 8.dp),
-                        tint = Color.Black,
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = ""
-                    )
+                val dropdownOpenState = remember { mutableStateOf(false) }
+                val currentContext = LocalContext.current
+                DropdownMenu(
+                    modifier = Modifier.fillMaxWidth(),
+                    items = listOf {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.recipe_share_label)) },
+                            onClick = {
+                                currentContext.getString(
+                                    R.string.recipe_share_model,
+                                    recipe.description,
+                                    recipe.preparation,
+                                    "" // TODO Load ingredients here
+                                )
+                                ContentSharer.shareText(currentContext, "Test")
+                            },
+                            trailingIcon = {
+                                Icon(imageVector = Icons.Default.Share, contentDescription = "")
+                            })
+                        DropdownMenuItem(
+                            colors = MenuDefaults.itemColors(
+                                textColor = Color.Red,
+                                trailingIconColor = Color.Red
+                            ),
+                            text = { Text(stringResource(R.string.recipe_delete_label)) },
+                            onClick = { onClick.onItemDelete(recipe) },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = ""
+                                )
+                            })
+                    },
+                    expanded = dropdownOpenState.value,
+                    onDismissRequest = { dropdownOpenState.value = false }) {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        onClick = { dropdownOpenState.value = true }) {
+                        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "")
+                    }
                 }
             }
             Column(
