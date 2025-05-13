@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
 import com.hugo.comermelhor.data.dao.RecipeDao
+import com.hugo.comermelhor.data.entities.RecipeWithIngredients
 import com.hugo.comermelhor.data.model.Recipe
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOf
@@ -65,5 +67,9 @@ class RecipesViewModel(private val recipesDao: RecipeDao = App.instance?.db?.rec
                     }, isLoading = false, error = null)
             }
         }
+    }
+
+    fun getIngredientsForRecipe(recipe: Recipe): Flow<RecipeWithIngredients> {
+        return recipesDao.getRecipeWithIngredientsById(recipe.recipeId ?: 0)
     }
 }

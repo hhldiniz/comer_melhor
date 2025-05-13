@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Delete
@@ -32,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -43,7 +41,6 @@ import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import com.hugo.comermelhor.R
 import com.hugo.comermelhor.data.model.Recipe
-import com.hugo.comermelhor.ui.util.ContentSharer
 
 @Composable
 fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeListHandlers) {
@@ -73,20 +70,13 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                         .fillMaxHeight(0.9f)
                 )
                 val dropdownOpenState = remember { mutableStateOf(false) }
-                val currentContext = LocalContext.current
                 DropdownMenu(
                     modifier = Modifier.fillMaxWidth(),
                     items = listOf {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.recipe_share_label)) },
                             onClick = {
-                                currentContext.getString(
-                                    R.string.recipe_share_model,
-                                    recipe.description,
-                                    recipe.preparation,
-                                    "" // TODO Load ingredients here
-                                )
-                                ContentSharer.shareText(currentContext, "Test")
+                                onClick.onShareRecipe(recipe)
                             },
                             trailingIcon = {
                                 Icon(imageVector = Icons.Default.Share, contentDescription = "")
@@ -161,6 +151,10 @@ fun FoodCardPreview() {
         }
 
         override fun onItemDelete(recipe: Recipe) {
+
+        }
+
+        override fun onShareRecipe(recipe: Recipe) {
 
         }
     })

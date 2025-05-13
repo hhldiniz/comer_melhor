@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,11 +34,13 @@ import androidx.navigation.NavController
 import com.hugo.comermelhor.R
 import com.hugo.comermelhor.data.model.Recipe
 import com.hugo.comermelhor.ui.navigation.Screens
+import com.hugo.comermelhor.ui.util.ContentSharer
 import com.hugo.comermelhor.ui.widgets.Error
 import com.hugo.comermelhor.ui.widgets.ErrorViewType
 import com.hugo.comermelhor.ui.widgets.Loading
 import com.hugo.comermelhor.ui.widgets.RecipeList
 import com.hugo.comermelhor.ui.widgets.RecipeListHandlers
+import kotlinx.coroutines.launch
 
 @Composable
 fun RecipeScreen(
@@ -45,6 +48,7 @@ fun RecipeScreen(
     recipesViewModel: RecipesViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = {
             navController.navigate(Screens.ADD_RECIPE.name + "/-1")
@@ -120,6 +124,27 @@ fun RecipeScreen(
                                 dialog.dismiss()
                             }
                         dialog.show()
+                    }
+
+                    override fun onShareRecipe(recipe: Recipe) {
+                        coroutineScope.launch {
+                            recipesViewModel.getIngredientsForRecipe(recipe)
+                                .collect { recipeWithIngredients ->
+                                    val textToShare = context.getString(
+                                        R.string.recipe_share_model,
+                                        recipe.description,
+                                        recipe.preparation
+                                    ) + "\n" + recipeWithIngredients.ingredients.joinToString("\n") { ingredient ->
+                                        context.getString(
+                                            R.string.ingredients_share_model,
+                                            ingredient.amount,
+                                            ingredient.unit,
+                                            ingredient.name
+                                        ) + "\n"
+                                    }
+                                    ContentSharer.shareText(context, textToShare)
+                                }
+                        }
                     }
                 })
             }

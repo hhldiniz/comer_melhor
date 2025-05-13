@@ -11,7 +11,10 @@
         Preparação: \n
         %s
         Ingredientes: \n
-        %s
+    </string>
+
+    <string name="ingredients_share_model">
+        %f %s de %s
     </string>
 
     <string name="retry_message">Clique para tentar novamente</string>
