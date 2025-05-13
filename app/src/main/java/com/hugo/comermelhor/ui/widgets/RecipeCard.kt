@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,11 +30,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,10 +49,14 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
-                .height(300.dp), verticalArrangement = Arrangement.SpaceBetween
+                .height(320.dp), verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.8f),
+                contentAlignment = Alignment.TopEnd
+            ) {
                 AsyncImage(
                     model = recipe.imageUri?.toUri(),
                     placeholder = painterResource(android.R.drawable.ic_menu_camera),
@@ -66,12 +71,12 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                         .clickable {
                             onClick.onRecipeImageClick(recipe)
                         }
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.9f)
+                        .fillMaxSize().clip(RoundedCornerShape(12.dp))
+
                 )
                 val dropdownOpenState = remember { mutableStateOf(false) }
                 DropdownMenu(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp, end = 8.dp),
                     items = listOf {
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.recipe_share_label)) },
@@ -106,15 +111,15 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
             }
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 HorizontalDivider(thickness = 1.dp)
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
                         .clickable {
                             onClick.onRecipeDescriptionClick(recipe)
                         },
@@ -123,8 +128,7 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                 ) {
                     Text(
                         recipe.description,
-                        modifier = Modifier.padding(start = 8.dp),
-                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(start = 8.dp).fillMaxWidth(0.9f),
                         fontSize = 20.sp
                     )
                     Icon(
