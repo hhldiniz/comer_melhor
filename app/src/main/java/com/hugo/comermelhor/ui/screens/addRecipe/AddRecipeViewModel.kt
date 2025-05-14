@@ -1,6 +1,7 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
@@ -15,10 +16,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.hugo.comermelhor.data.services.openfoodapi.OpenFoodApiService
 
 class AddRecipeViewModel(
     private val recipeDao: RecipeDao = App.instance?.db?.recipeDao()!!,
-    private val ingredientsDao: IngredientsDao = App.instance?.db?.ingredientDao()!!
+    private val ingredientsDao: IngredientsDao = App.instance?.db?.ingredientDao()!!,
+    private val openFoodApiService: OpenFoodApiService? = App.instance?.openFoodApiService
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AddRecipeViewState())
     val uiState = _uiState
@@ -52,6 +55,7 @@ class AddRecipeViewModel(
 
     fun updateIngredient(ingredient: Ingredient) {
         val ingredientsResult = mutableListOf<Ingredient>()
+        val caloriesSearchKeyBuilder = StringBuilder()
         _uiState.value.ingredients.toMutableList().forEach {
             if (it.ingredientId == ingredient.ingredientId) {
                 ingredientsResult.add(
@@ -66,6 +70,21 @@ class AddRecipeViewModel(
             } else {
                 ingredientsResult.add(it)
             }
+            ingredientsResult.last().let { ingredient ->
+                caloriesSearchKeyBuilder.append("${ingredient.name},")
+            }
+        }
+        viewModelScope.launch {
+            flowOf(openFoodApiService?.searchProductByName(caloriesSearchKeyBuilder.toString())).catch {
+                Log.e("AddRecipeViewModel", "updateIngredient: ", it)
+            }
+                .collect { productSearchResponse ->
+                    _uiState.value =
+                        _uiState.value.copy(calories = productSearchResponse?.products?.sumOf {
+                            it.nutriments.energyKcal?.toInt() ?: 0
+                        }
+                            ?: 0)
+                }
         }
 
         _uiState.value =
