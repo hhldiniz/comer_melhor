@@ -71,21 +71,23 @@ class AddRecipeViewModel(
                 ingredientsResult.add(it)
             }
             ingredientsResult.last().let { ingredient ->
-                caloriesSearchKeyBuilder.append("${ingredient.name},")
+                if (ingredient.name.length > 3)
+                    caloriesSearchKeyBuilder.append("${ingredient.name},")
             }
         }
-        viewModelScope.launch {
-            flowOf(openFoodApiService?.searchProductByName(caloriesSearchKeyBuilder.toString())).catch {
-                Log.e("AddRecipeViewModel", "updateIngredient: ", it)
-            }
-                .collect { productSearchResponse ->
-                    _uiState.value =
-                        _uiState.value.copy(calories = productSearchResponse?.products?.sumOf {
-                            it.nutriments.energyKcal?.toInt() ?: 0
-                        }
-                            ?: 0)
+        if (caloriesSearchKeyBuilder.toString().isNotEmpty())
+            viewModelScope.launch {
+                flowOf(openFoodApiService?.searchProductByName(caloriesSearchKeyBuilder.toString())).catch {
+                    Log.e("AddRecipeViewModel", "updateIngredient: ", it)
                 }
-        }
+                    .collect { productSearchResponse ->
+                        _uiState.value =
+                            _uiState.value.copy(calories = productSearchResponse?.products?.sumOf {
+                                it.nutriments.energyKcal?.toInt() ?: 0
+                            }
+                                ?: 0)
+                    }
+            }
 
         _uiState.value =
             _uiState.value.copy(ingredients = ingredientsResult)

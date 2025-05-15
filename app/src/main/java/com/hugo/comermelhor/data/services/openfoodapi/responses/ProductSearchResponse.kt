@@ -20,6 +20,8 @@ data class Product(
     @SerializedName("product_name_en") val productNameEn: String,
     @SerializedName("product_quantity") val productQuantity: String,
     @SerializedName("product_name_quantity_unit") val productNameQuantityUnit: String,
+    @SerializedName("serving_quantity") val servingQuantity: String,
+    @SerializedName("serving_quantity_unit") val servingQuantityUnit: String,
     val quantity: String,
     val nutriments: Nutriments
 )
