@@ -130,7 +130,7 @@ fun RecipeCard(modifier: Modifier = Modifier, recipe: Recipe, onClick: RecipeLis
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        recipe.description,
+                        recipe.description.ifEmpty { stringResource(R.string.recipe_no_description) },
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .fillMaxWidth(0.9f),

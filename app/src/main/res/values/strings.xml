@@ -49,4 +49,5 @@
     <string name="ingredient_amount_description_label">Qtd.</string>
     <string name="ingredient_unit_description_label">Unid.</string>
     <string name="no_recipes_found">Nenhuma receita para mostrar</string>
+    <string name="recipe_no_description">Receita sem Título</string>
 </resources>
