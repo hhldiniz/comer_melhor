@@ -19,5 +19,6 @@ data class Ingredient(
     val name: String,
     val recipeId: Int,
     val amount: Float,
-    val unit: String
+    val unit: String,
+    val caloriesPerGram: Int
 )

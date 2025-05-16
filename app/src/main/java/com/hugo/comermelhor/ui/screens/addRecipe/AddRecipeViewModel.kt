@@ -1,7 +1,7 @@
 package com.hugo.comermelhor.ui.screens.addRecipe
 
 import android.net.Uri
-import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hugo.comermelhor.App
@@ -9,14 +9,15 @@ import com.hugo.comermelhor.data.dao.IngredientsDao
 import com.hugo.comermelhor.data.dao.RecipeDao
 import com.hugo.comermelhor.data.model.Ingredient
 import com.hugo.comermelhor.data.model.Recipe
+import com.hugo.comermelhor.data.services.openfoodapi.OpenFoodApiService
+import com.hugo.comermelhor.util.replaceAt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
-import com.hugo.comermelhor.data.services.openfoodapi.OpenFoodApiService
+import kotlinx.coroutines.runBlocking
 
 class AddRecipeViewModel(
     private val recipeDao: RecipeDao = App.instance?.db?.recipeDao()!!,
@@ -38,7 +39,8 @@ class AddRecipeViewModel(
                         calories = it.recipe.calories,
                         ingredients = it.ingredients,
                         recipeImage = it.recipe.imageUri?.toUri(),
-                        isLoading = false, error = null
+                        isLoading = false,
+                        error = null
                     )
                 }
             }
@@ -55,7 +57,6 @@ class AddRecipeViewModel(
 
     fun updateIngredient(ingredient: Ingredient) {
         val ingredientsResult = mutableListOf<Ingredient>()
-        val caloriesSearchKeyBuilder = StringBuilder()
         _uiState.value.ingredients.toMutableList().forEach {
             if (it.ingredientId == ingredient.ingredientId) {
                 ingredientsResult.add(
@@ -70,27 +71,29 @@ class AddRecipeViewModel(
             } else {
                 ingredientsResult.add(it)
             }
-            ingredientsResult.last().let { ingredient ->
-                if (ingredient.name.length > 3)
-                    caloriesSearchKeyBuilder.append("${ingredient.name},")
-            }
         }
-        if (caloriesSearchKeyBuilder.toString().isNotEmpty())
-            viewModelScope.launch {
-                flowOf(openFoodApiService?.searchProductByName(caloriesSearchKeyBuilder.toString())).catch {
-                    Log.e("AddRecipeViewModel", "updateIngredient: ", it)
-                }
-                    .collect { productSearchResponse ->
-                        _uiState.value =
-                            _uiState.value.copy(calories = productSearchResponse?.products?.sumOf {
-                                it.nutriments.energyKcal?.toInt() ?: 0
-                            }
-                                ?: 0)
-                    }
-            }
+        /*runBlocking {
+            ingredientsResult.forEach {
+                viewModelScope.launch {
+                    flowOf(openFoodApiService?.searchProductByName(it.name)).collect {
+                        if (it?.products?.isNotEmpty() == true) {
+                            val ingredientToUpdate =
+                                ingredientsResult.find { it.ingredientId == ingredient.ingredientId }
 
-        _uiState.value =
-            _uiState.value.copy(ingredients = ingredientsResult)
+                            ingredientsResult.replaceAt(
+                                ingredientsResult.indexOf(ingredientToUpdate),
+                                ingredientToUpdate!!.copy(
+                                    caloriesPerGram = it.products.first().nutriments.energyKcal?.toInt()
+                                        ?: 0
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }*/
+        _uiState.value = _uiState.value.copy(
+            ingredients = ingredientsResult)
     }
 
     fun updateImage(imageUri: Uri) {
@@ -101,8 +104,7 @@ class AddRecipeViewModel(
         val ingredients = _uiState.value.ingredients.toMutableList()
         ingredients.add(ingredient)
 
-        _uiState.value =
-            _uiState.value.copy(ingredients = ingredients)
+        _uiState.value = _uiState.value.copy(ingredients = ingredients)
     }
 
     fun addRecipeIfNotExists(): Job {
@@ -128,13 +130,15 @@ class AddRecipeViewModel(
                         name = it.name,
                         recipeId = if (isEditing()) _uiState.value.recipeId else recipeId.toInt(),
                         amount = it.amount,
-                        unit = it.unit
+                        unit = it.unit,
+                        caloriesPerGram = it.caloriesPerGram
                     )
                 }
                 flow<Unit> {
                     ingredientsDao.insertIngredients(*ingredients.toTypedArray())
                 }.catch { error ->
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = error.message)
+                    _uiState.value =
+                        _uiState.value.copy(isLoading = false, error = error.message)
                 }.collect {
                     _uiState.value = _uiState.value.copy(isLoading = false, error = null)
                 }

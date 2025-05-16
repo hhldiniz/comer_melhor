@@ -232,7 +232,8 @@ private fun IngredientsSection(
                         name = "",
                         recipeId = 0,
                         amount = 0f,
-                        unit = ""
+                        unit = "",
+                        caloriesPerGram = 0
                     )
                 )
             }) {
