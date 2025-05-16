@@ -30,12 +30,15 @@
     <string name="description_field_label">Descrição</string>
     <string name="preparation_field_label">Preparação</string>
     <string-array name="ingredients_units">
-        <item>Gramas</item>
-        <item>Quilos</item>
-        <item>Mililitros</item>
-        <item>Litros</item>
-        <item>Unidades</item>
+        <item>Colheres de Sopa</item>
+        <item>Colheres de Chá</item>
         <item>Dúzias</item>
+        <item>Gramas</item>
+        <item>Litros</item>
+        <item>Mililitros</item>
+        <item>Quilos</item>
+        <item>Unidades</item>
+        <item>Xícaras</item>
     </string-array>
     <string name="calories">Calorias estimadas: %d</string>
 
