@@ -193,7 +193,7 @@ fun AddRecipeScreen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(stringResource(R.string.calories, state.calories))
+//                Text(stringResource(R.string.calories, state.calories))
 
                 PrimaryButton(
                     text = stringResource(R.string.add_recipe_btn),
